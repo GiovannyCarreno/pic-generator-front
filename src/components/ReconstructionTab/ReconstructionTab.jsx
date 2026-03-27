@@ -18,6 +18,7 @@ function downloadFromDataUrl(dataUrl, filename) {
 export default function ReconstructionTab() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
@@ -39,8 +40,7 @@ export default function ReconstructionTab() {
     [result]
   );
 
-  const handleFileChange = (event) => {
-    const file = event.target.files?.[0];
+  const processFile = (file) => {
     setError(null);
     setResult(null);
 
@@ -67,6 +67,27 @@ export default function ReconstructionTab() {
     });
   };
 
+  const handleFileChange = (event) => {
+    processFile(event.target.files?.[0]);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    setIsDragging(false);
+    const file = event.dataTransfer.files?.[0];
+    processFile(file);
+  };
+
   const handleCompare = async () => {
     if (!selectedFile) {
       setError('Selecciona una imagen para continuar.');
@@ -89,14 +110,26 @@ export default function ReconstructionTab() {
     <div className="reconstruction-container">
       <div className="controls-grid reconstruction-grid">
         <div className="control-group">
-          <label className="control-label" htmlFor="reconstruction-image">
+          <label className="control-label">
             Imagen para comparar
+          </label>
+          <label
+            htmlFor="reconstruction-image"
+            className={`reconstruction-dropzone ${isDragging ? 'dragging' : ''}`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <Upload size={28} />
+            <span>Haz clic para seleccionar una imagen</span>
+            <small>Tambien puedes arrastrar y soltarla aqui</small>
+            {selectedFile && <p className="reconstruction-file-name">{selectedFile.name}</p>}
           </label>
           <input
             id="reconstruction-image"
             type="file"
             accept=".png,.jpg,.jpeg,.bmp,.webp"
-            className="input-field reconstruction-file-input"
+            className="reconstruction-file-input"
             onChange={handleFileChange}
           />
         </div>
@@ -126,7 +159,9 @@ export default function ReconstructionTab() {
       {previewUrl && !result && (
         <div className="reconstruction-preview">
           <p className="control-label">Vista previa</p>
-          <img src={previewUrl} alt="Vista previa" className="result-image reconstruction-image" />
+          <div className="reconstruction-preview-card">
+            <img src={previewUrl} alt="Vista previa" className="result-image reconstruction-image" />
+          </div>
         </div>
       )}
 

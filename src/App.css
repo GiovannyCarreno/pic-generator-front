@@ -388,9 +388,47 @@ select.input-field {
   margin-bottom: 0;
 }
 
-.reconstruction-file-input {
-  padding: 0.75rem;
+.reconstruction-dropzone {
+  min-height: 180px;
+  border: 2px dashed rgba(255, 255, 255, 0.45);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 1.25rem;
   cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.reconstruction-dropzone:hover,
+.reconstruction-dropzone.dragging {
+  border-color: #93c5fd;
+  background: rgba(147, 197, 253, 0.14);
+}
+
+.reconstruction-dropzone span {
+  font-weight: 600;
+}
+
+.reconstruction-dropzone small {
+  opacity: 0.9;
+}
+
+.reconstruction-file-name {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin-top: 0.25rem;
+}
+
+.reconstruction-file-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .reconstruction-preview {
@@ -399,8 +437,23 @@ select.input-field {
   gap: 0.75rem;
 }
 
+.reconstruction-preview-card {
+  width: 100%;
+  min-height: 320px;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
 .reconstruction-image {
   max-width: 420px;
+  max-height: 300px;
+  margin-bottom: 0;
+  object-fit: contain;
 }
 
 .reconstruction-results {
@@ -572,6 +625,7 @@ select.input-field {
 
   .reconstruction-image {
     max-width: 100%;
+    max-height: 260px;
   }
 
   .reconstruction-comparison-row {
