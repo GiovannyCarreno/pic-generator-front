@@ -1,4 +1,4 @@
-import { Wand2, Grid3x3, Paintbrush } from 'lucide-react';
+import { Wand2, Grid3x3, Paintbrush, RefreshCw } from 'lucide-react';
 
 export default function ModeSelector({ mode, onModeChange }) {
   return (
@@ -23,6 +23,13 @@ export default function ModeSelector({ mode, onModeChange }) {
       >
         <Paintbrush size={20} />
         Restauración de pictogramas
+      </button>
+      <button
+        onClick={() => onModeChange('reconstruction')}
+        className={`mode-btn ${mode === 'reconstruction' ? 'active' : 'inactive'}`}
+      >
+        <RefreshCw size={20} />
+        Reconstrucción
       </button>
     </div>
   );

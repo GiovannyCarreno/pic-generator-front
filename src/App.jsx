@@ -5,6 +5,7 @@ import GenerationControls from './components/GenerationControls/GenerationContro
 import SingleImageResult from './components/SingleImageResult/SingleImageResult';
 import MultipleImagesResult from './components/MultipleImagesResult/MultipleImagesResult';
 import RestorationEditor from './components/RestorationEditor/RestorationEditor';
+import ReconstructionTab from './components/ReconstructionTab/ReconstructionTab';
 import Footer from './components/Footer/Footer';
 import { useImageGenerator } from './hooks/useImageGenerator';
 import './App.css';
@@ -42,7 +43,7 @@ export default function App() {
         <div className={`card ${mode === 'restoration' ? 'card--restoration' : ''}`}>
           <ModeSelector mode={mode} onModeChange={setMode} />
 
-          {mode !== 'restoration' && (
+          {mode !== 'restoration' && mode !== 'reconstruction' && (
           <GenerationControls
             mode={mode}
             seedInput={seedInput}
@@ -64,9 +65,10 @@ export default function App() {
           )}
 
           {mode === 'restoration' && <RestorationEditor />}
+          {mode === 'reconstruction' && <ReconstructionTab />}
         </div>
 
-        {mode !== 'restoration' && singleResult && (
+        {mode !== 'restoration' && mode !== 'reconstruction' && singleResult && (
           <SingleImageResult
             result={singleResult}
             truncationPsi={truncationPsi}
@@ -76,7 +78,7 @@ export default function App() {
           />
         )}
 
-        {mode !== 'restoration' && multipleResults && (
+        {mode !== 'restoration' && mode !== 'reconstruction' && multipleResults && (
           <MultipleImagesResult
             results={multipleResults}
             truncationPsi={truncationPsi}
