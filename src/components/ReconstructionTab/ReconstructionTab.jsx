@@ -170,20 +170,16 @@ export default function ReconstructionTab() {
           <h3 className="section-title">Resultados de comparación</h3>
           <div className="reconstruction-metrics">
             <div className="reconstruction-metric-card">
-              <p>Modelo 1 - Cobertura</p>
+              <p>Resolución 256x256 - Cobertura</p>
               <strong>{result.metricas?.cobertura_modelo_1?.toFixed?.(2) ?? '-'}%</strong>
             </div>
             <div className="reconstruction-metric-card">
-              <p>Modelo 2 - Cobertura</p>
+              <p>Resolución 512x512 - Cobertura</p>
               <strong>{result.metricas?.cobertura_modelo_2?.toFixed?.(2) ?? '-'}%</strong>
             </div>
             <div className="reconstruction-metric-card">
-              <p>Threshold modelo 1</p>
+              <p>Threshold</p>
               <strong>{result.metricas?.threshold_modelo_1 ?? '-'}</strong>
-            </div>
-            <div className="reconstruction-metric-card">
-              <p>Threshold modelo 2</p>
-              <strong>{result.metricas?.threshold_modelo_2 ?? '-'}</strong>
             </div>
           </div>
 
@@ -196,7 +192,7 @@ export default function ReconstructionTab() {
             )}
             {imageResults.modelo1 && (
               <div className="image-card">
-                <p className="image-seed">Simulación - Modelo 1</p>
+                <p className="image-seed">Simulación - Segmentado a 256x256 px</p>
                 <img src={imageResults.modelo1} alt="Simulación del modelo 1" />
                 <div className="image-actions">
                   <button
@@ -211,7 +207,7 @@ export default function ReconstructionTab() {
             )}
             {imageResults.modelo2 && (
               <div className="image-card">
-                <p className="image-seed">Simulación - Modelo 2</p>
+                <p className="image-seed">Simulación - Segmentado a 512x512 px</p>
                 <img src={imageResults.modelo2} alt="Simulación del modelo 2" />
                 <div className="image-actions">
                   <button
