@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Download, Loader2, Upload } from 'lucide-react';
 import { compareModels } from '../../api/imageApi';
+import SectionHeading from '../ui/SectionHeading';
 
 function asDataUrl(base64Value) {
   if (!base64Value) return null;
@@ -14,6 +15,8 @@ function downloadFromDataUrl(dataUrl, filename) {
   link.download = filename;
   link.click();
 }
+
+const inputLabelClass = 'text-sm font-semibold text-ink';
 
 export default function ReconstructionTab() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -106,30 +109,38 @@ export default function ReconstructionTab() {
     }
   };
 
+  const dropzoneClass = `flex min-h-[180px] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-5 py-6 text-center transition duration-200 ${
+    isDragging
+      ? 'border-accent bg-accent/10 scale-[1.01]'
+      : 'border-cream-300 bg-cream-200/40 hover:border-accent/50 hover:bg-cream-200/70'
+  }`;
+
   return (
-    <div className="reconstruction-container">
-      <div className="controls-grid reconstruction-grid">
-        <div className="control-group">
-          <label className="control-label">
-            Imagen para comparar
-          </label>
+    <div className="flex flex-col gap-5">
+      <div className="grid grid-cols-1 gap-4">
+        <div className="flex flex-col gap-2">
+          <span className={inputLabelClass}>Imagen para comparar</span>
           <label
             htmlFor="reconstruction-image"
-            className={`reconstruction-dropzone ${isDragging ? 'dragging' : ''}`}
+            className={dropzoneClass}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
-            <Upload size={28} />
-            <span>Haz clic para seleccionar una imagen</span>
-            <small>Tambien puedes arrastrar y soltarla aqui</small>
-            {selectedFile && <p className="reconstruction-file-name">{selectedFile.name}</p>}
+            <Upload className="size-7 text-accent" aria-hidden />
+            <span className="font-semibold text-ink">Haz clic para seleccionar una imagen</span>
+            <small className="text-sm text-ink-muted">También puedes arrastrar y soltarla aquí</small>
+            {selectedFile && (
+              <p className="mt-1 max-w-full truncate text-xs text-ink-muted" title={selectedFile.name}>
+                {selectedFile.name}
+              </p>
+            )}
           </label>
           <input
             id="reconstruction-image"
             type="file"
             accept=".png,.jpg,.jpeg,.bmp,.webp"
-            className="reconstruction-file-input"
+            className="sr-only"
             onChange={handleFileChange}
           />
         </div>
@@ -137,99 +148,136 @@ export default function ReconstructionTab() {
 
       <button
         type="button"
-        className="generate-btn"
+        className="flex w-full min-h-[48px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-hover px-4 py-3.5 text-lg font-bold text-cream-50 shadow-lg shadow-ink/15 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         onClick={handleCompare}
         disabled={loading || !selectedFile}
+        aria-busy={loading}
       >
         {loading ? (
           <>
-            <Loader2 size={20} className="spinning" />
-            Comparando modelos...
+            <Loader2 className="size-5 animate-spin" aria-hidden />
+            Ejecutando reconstrucción…
           </>
         ) : (
           <>
-            <Upload size={20} />
+            <Upload className="size-5" aria-hidden />
             Ejecutar reconstrucción
           </>
         )}
       </button>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && (
+        <div
+          className="rounded-xl border border-terracotta/40 bg-terracotta/10 px-4 py-3 text-sm text-ink"
+          role="alert"
+        >
+          {error}
+        </div>
+      )}
 
       {previewUrl && !result && (
-        <div className="reconstruction-preview">
-          <p className="control-label">Vista previa</p>
-          <div className="reconstruction-preview-card">
-            <img src={previewUrl} alt="Vista previa" className="result-image reconstruction-image" />
+        <div className="flex flex-col gap-3">
+          <p className={inputLabelClass}>Vista previa</p>
+          <div className="flex min-h-[200px] items-center justify-center rounded-xl border border-cream-300 bg-cream-100/80 p-4">
+            <img
+              src={previewUrl}
+              alt="Vista previa del archivo seleccionado"
+              className="max-h-[min(70vh,560px)] w-full object-contain"
+            />
           </div>
         </div>
       )}
 
       {result && (
-        <div className="reconstruction-results">
-          <h3 className="section-title">Resultados de comparación</h3>
-          <div className="reconstruction-metrics">
-            <div className="reconstruction-metric-card">
-              <p>Resolución 256x256 - Cobertura</p>
-              <strong>{result.metricas?.cobertura_modelo_1?.toFixed?.(2) ?? '-'}%</strong>
+        <div className="mt-1 space-y-6">
+          <SectionHeading as="h3">Resultados de comparación</SectionHeading>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="rounded-xl border border-cream-300 bg-cream-100/90 p-4 text-ink">
+              <p className="mb-1 text-sm text-ink-muted">Resolución 256×256 — cobertura</p>
+              <strong className="text-lg tabular-nums text-ink">
+                {result.metricas?.cobertura_modelo_1?.toFixed?.(2) ?? '-'}%
+              </strong>
             </div>
-            <div className="reconstruction-metric-card">
-              <p>Resolución 512x512 - Cobertura</p>
-              <strong>{result.metricas?.cobertura_modelo_2?.toFixed?.(2) ?? '-'}%</strong>
+            <div className="rounded-xl border border-cream-300 bg-cream-100/90 p-4 text-ink">
+              <p className="mb-1 text-sm text-ink-muted">Resolución 512×512 — cobertura</p>
+              <strong className="text-lg tabular-nums text-ink">
+                {result.metricas?.cobertura_modelo_2?.toFixed?.(2) ?? '-'}%
+              </strong>
             </div>
-            <div className="reconstruction-metric-card">
-              <p>Threshold</p>
-              <strong>{result.metricas?.threshold_modelo_1 ?? '-'}</strong>
+            <div className="rounded-xl border border-cream-300 bg-cream-100/90 p-4 text-ink sm:col-span-2 lg:col-span-1">
+              <p className="mb-1 text-sm text-ink-muted">Threshold</p>
+              <strong className="text-lg tabular-nums text-ink">{result.metricas?.threshold_modelo_1 ?? '-'}</strong>
             </div>
           </div>
 
-          <div className="reconstruction-comparison-row">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
             {previewUrl && (
-              <div className="image-card">
-                <p className="image-seed">Imagen original</p>
-                <img src={previewUrl} alt="Vista previa original" />
-              </div>
+              <article className="rounded-xl border border-cream-300/80 bg-cream-50/90 p-3 sm:p-4">
+                <p className="mb-2 text-center text-sm font-medium text-ink-muted">Imagen original</p>
+                <img
+                  src={previewUrl}
+                  alt="Imagen original cargada"
+                  className="aspect-square w-full object-contain bg-cream-200/50"
+                />
+              </article>
             )}
             {imageResults.modelo1 && (
-              <div className="image-card">
-                <p className="image-seed">Simulación - Segmentado a 256x256 px</p>
-                <img src={imageResults.modelo1} alt="Simulación del modelo 1" />
-                <div className="image-actions">
+              <article className="rounded-xl border border-cream-300/80 bg-cream-50/90 p-3 sm:p-4">
+                <p className="mb-2 text-center text-sm font-medium text-ink-muted">Simulación — segmentado 256×256 px</p>
+                <img
+                  src={imageResults.modelo1}
+                  alt="Simulación del modelo 1"
+                  className="aspect-square w-full object-contain bg-cream-200/50"
+                />
+                <div className="mt-3 flex justify-center">
                   <button
                     type="button"
-                    className="small-btn green"
+                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg bg-sage px-4 py-2 text-sm font-medium text-cream-50 transition hover:bg-sage-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage"
                     onClick={() => downloadFromDataUrl(imageResults.modelo1, 'simulacion_modelo_1.png')}
+                    aria-label="Descargar simulación modelo 1 (PNG)"
                   >
-                    <Download size={16} />
+                    <Download className="size-4 shrink-0" aria-hidden />
+                    Descargar
                   </button>
                 </div>
-              </div>
+              </article>
             )}
             {imageResults.modelo2 && (
-              <div className="image-card">
-                <p className="image-seed">Simulación - Segmentado a 512x512 px</p>
-                <img src={imageResults.modelo2} alt="Simulación del modelo 2" />
-                <div className="image-actions">
+              <article className="rounded-xl border border-cream-300/80 bg-cream-50/90 p-3 sm:p-4">
+                <p className="mb-2 text-center text-sm font-medium text-ink-muted">Simulación — segmentado 512×512 px</p>
+                <img
+                  src={imageResults.modelo2}
+                  alt="Simulación del modelo 2"
+                  className="aspect-square w-full object-contain bg-cream-200/50"
+                />
+                <div className="mt-3 flex justify-center">
                   <button
                     type="button"
-                    className="small-btn green"
+                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg bg-sage px-4 py-2 text-sm font-medium text-cream-50 transition hover:bg-sage-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage"
                     onClick={() => downloadFromDataUrl(imageResults.modelo2, 'simulacion_modelo_2.png')}
+                    aria-label="Descargar simulación modelo 2 (PNG)"
                   >
-                    <Download size={16} />
+                    <Download className="size-4 shrink-0" aria-hidden />
+                    Descargar
                   </button>
                 </div>
-              </div>
+              </article>
             )}
           </div>
 
-          <div className="reconstruction-images-grid">
-            {imageResults.comparacion && (
-              <div className="image-card">
-                <p className="image-seed">Comparación general</p>
-                <img src={imageResults.comparacion} alt="Comparación de modelos" />
+          {imageResults.comparacion && (
+            <article className="w-full rounded-xl border border-cream-300/80 bg-cream-50/90 p-3 sm:p-4">
+              <p className="mb-3 text-center text-sm font-medium text-ink-muted">Comparación general</p>
+              <div className="flex min-h-[min(55vh,520px)] w-full items-center justify-center rounded-lg border border-cream-200/90 bg-cream-200/45 p-2 sm:min-h-[min(60vh,640px)] sm:p-4">
+                <img
+                  src={imageResults.comparacion}
+                  alt="Comparación de modelos"
+                  className="h-auto max-h-[min(85vh,920px)] w-full object-contain"
+                />
               </div>
-            )}
-          </div>
+            </article>
+          )}
         </div>
       )}
     </div>

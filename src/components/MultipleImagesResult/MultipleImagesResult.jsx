@@ -1,4 +1,6 @@
 import ImageCard from '../ImageCard/ImageCard';
+import GlassCard from '../ui/GlassCard';
+import SectionHeading from '../ui/SectionHeading';
 
 export default function MultipleImagesResult({
   results,
@@ -8,9 +10,11 @@ export default function MultipleImagesResult({
   onDownload,
 }) {
   return (
-    <div className="card">
-      <h2 className="section-title">{results.number} Imágenes Generadas</h2>
-      <div className="images-grid">
+    <GlassCard className="!mb-0 mt-6">
+      <SectionHeading id="resultado-multiple">
+        {results.number} imágenes generadas
+      </SectionHeading>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {results.images.map((img, idx) => (
           <ImageCard
             key={idx}
@@ -23,6 +27,6 @@ export default function MultipleImagesResult({
           />
         ))}
       </div>
-    </div>
+    </GlassCard>
   );
 }

@@ -1,68 +1,88 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+@theme {
+  --color-cream-50: #fdfbf7;
+  --color-cream-100: #f7f2e9;
+  --color-cream-200: #ede6d8;
+  --color-cream-300: #d9cdb8;
+  --color-ink: #2c2825;
+  --color-ink-muted: #5c5650;
+  --color-sidebar: #3a342c;
+  --color-sidebar-hover: #4d453b;
+  --color-accent: #8b6914;
+  --color-accent-hover: #735510;
+  --color-terracotta: #9c5846;
+  --color-terracotta-hover: #854a3b;
+  --color-sage: #4a6b4e;
+  --color-sage-hover: #3d5a41;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  width: 100%;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@keyframes main-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
   }
-  a:hover {
-    color: #747bff;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply m-0 min-h-screen min-w-[320px] w-full bg-cream-100 text-ink antialiased;
+    font-family: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-heading {
+    font-family: "Cormorant Garamond", ui-serif, Georgia, "Times New Roman", serif;
+  }
+
   button {
-    background-color: #f9f9f9;
+    font-family: inherit;
+  }
+}
+
+@layer utilities {
+  .animate-main-enter {
+    animation: main-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animate-backdrop-in {
+    animation: fade-in 0.3s ease-out both;
+  }
+}
+
+@layer components {
+  .range-input {
+    @apply h-2 w-full cursor-pointer appearance-none rounded-full bg-cream-300/80;
+  }
+
+  .range-input::-webkit-slider-thumb {
+    @apply h-[18px] w-[18px] cursor-pointer appearance-none rounded-full border-2 border-cream-100 bg-accent shadow-sm;
+  }
+
+  .range-input::-moz-range-thumb {
+    @apply h-[18px] w-[18px] cursor-pointer rounded-full border-2 border-cream-100 bg-accent shadow-sm;
   }
 }
